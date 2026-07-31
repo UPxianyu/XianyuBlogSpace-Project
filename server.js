@@ -14,6 +14,16 @@ const ROOT = __dirname;
 const DIST = path.join(ROOT, "dist");
 const PORT = Number(process.env.PORT) || 3000;
 
+// 读取 base（子路径部署），本地预览时自动剥离前缀
+const BASE_PATH = (() => {
+  try {
+    const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "config", "site.json"), "utf8"));
+    return String(cfg.base || "/").replace(/\/?$/, "/");
+  } catch {
+    return "/";
+  }
+})();
+
 const MIME = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -40,6 +50,10 @@ const server = http.createServer((req, res) => {
   } catch {
     res.writeHead(400);
     return res.end("Bad Request");
+  }
+  if (BASE_PATH !== "/" && pathname.startsWith(BASE_PATH)) {
+    pathname = pathname.slice(BASE_PATH.length - 1);
+    if (pathname === "") pathname = "/";
   }
   if (pathname === "/") pathname = "/index.html";
 
