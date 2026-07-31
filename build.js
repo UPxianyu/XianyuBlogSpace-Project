@@ -276,7 +276,7 @@ function renderIndex(posts) {
 
     <section class="section" id="about">
       <div class="section__head">
-        <h2><span class="section__tag">04</span> 关于</h2>
+        <h2><span class="section__tag">04</span> 关于本鱼🐟</h2>
       </div>
       <div class="about-card">${R.escapeHtml(site.about || "")}</div>
     </section>
