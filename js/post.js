@@ -39,7 +39,8 @@ function startWaline() {
     serverURL: SITE.walineServer,
     lang: "zh-CN",
     pageSize: 10,
-    requiredFields: ["nick"],
+    meta: ["nick"],
+    requiredMeta: ["nick"],
     dark: 'html[data-theme="dark"]',
   });
 }

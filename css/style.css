@@ -825,8 +825,6 @@ html[data-theme="light"] .icon-moon {
   align-items: start;
 }
 .home-side {
-  position: sticky;
-  top: 96px;
   padding: 96px 0 40px;
 }
 .profile-card {
@@ -882,16 +880,13 @@ html[data-theme="light"] .icon-moon {
   color: #171a21;
 }
 .profile-card__sign {
-  margin: 0;
-  font-family: "Ma Shan Zheng", "Kaiti SC", "STKaiti", "KaiTi", cursive;
-  font-style: italic;
-  font-size: 21px;
-  letter-spacing: 5px;
-  background: linear-gradient(120deg, var(--accent), var(--accent-2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  transform: rotate(-4deg);
+  width: 180px;
+  height: auto;
+  opacity: 0.92;
+  transition: opacity 0.25s ease;
+}
+.profile-card__sign:hover {
+  opacity: 1;
 }
 
 /* ============ 页脚 ============ */

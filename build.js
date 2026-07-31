@@ -176,7 +176,7 @@ function profileSideHtml() {
       <div class="profile-card">
         <img class="profile-card__avatar" src="${url("assets/og.jpg")}" alt="${R.escapeHtml(site.heroName || "avatar")}">
         <div class="profile-card__socials">${socialHtml}</div>
-        <p class="profile-card__sign">不变的歌声</p>
+        <img class="profile-card__sign" src="${url("assets/signature.png")}" alt="不变的歌声">
       </div>
     </aside>`;
 }
