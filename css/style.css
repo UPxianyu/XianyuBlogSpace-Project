@@ -1249,6 +1249,11 @@ html[data-theme="light"] .post-content pre code {
   background: var(--panel);
 }
 
+/* 隐藏"订阅本文评论 / 订阅本站评论"RSS 按钮（多数访客用不到） */
+#waline .wl-rss {
+  display: none;
+}
+
 .comment-form {
   display: flex;
   flex-direction: column;
