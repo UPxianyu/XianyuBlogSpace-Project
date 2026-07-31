@@ -145,7 +145,7 @@ function footerHtml(s) {
 
 /* ---------------- 首页右侧个人卡片 ---------------- */
 
-function profileSideHtml() {
+function profileSideHtml(aboutHref) {
   const socials = [
     {
       name: "Bilibili",
@@ -171,10 +171,15 @@ function profileSideHtml() {
       </a>`
     )
     .join("");
+  const avatarHtml = aboutHref
+    ? `<a class="profile-card__avatar-link" href="${aboutHref}" aria-label="自我介绍">
+        <img class="profile-card__avatar" src="${url("assets/og.jpg")}" alt="${R.escapeHtml(site.heroName || "avatar")}">
+      </a>`
+    : `<img class="profile-card__avatar" src="${url("assets/og.jpg")}" alt="${R.escapeHtml(site.heroName || "avatar")}">`;
   return `
     <aside class="home-side">
       <div class="profile-card">
-        <img class="profile-card__avatar" src="${url("assets/og.jpg")}" alt="${R.escapeHtml(site.heroName || "avatar")}">
+        ${avatarHtml}
         <div class="profile-card__socials">${socialHtml}</div>
         <img class="profile-card__sign" src="${url("assets/signature-2.png")}" alt="不变的歌声">
       </div>
@@ -187,6 +192,9 @@ function renderIndex(posts) {
   const themeCards = (site.themes || []).map(themeCardHtml).join("");
   const cards = posts.map(cardHtml).join("");
   const archive = posts.map(archiveItemHtml).join("");
+  const aboutPost =
+    posts.find((p) => p.id === "2026-08-01-about-me") || posts.find((p) => p.pinned);
+  const aboutHref = aboutPost ? url(`post/${encodeURIComponent(aboutPost.id)}.html`) : "";
   const linkCards = (site.links || [])
     .map(
       (l) => `
@@ -282,7 +290,7 @@ function renderIndex(posts) {
       <div class="links">${linkCards}</div>
     </section>
     </div>
-    ${profileSideHtml()}
+    ${profileSideHtml(aboutHref)}
   </div>
   </main>
   ${footerHtml(site)}

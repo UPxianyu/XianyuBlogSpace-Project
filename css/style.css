@@ -848,6 +848,13 @@ html[data-theme="light"] .icon-moon {
   border: 2px solid var(--border-strong);
   transition: transform 0.3s ease;
 }
+.profile-card__avatar-link {
+  display: block;
+  line-height: 0;
+}
+.profile-card__avatar-link:hover .profile-card__avatar {
+  transform: scale(1.04);
+}
 .profile-card__avatar:hover {
   transform: scale(1.04);
 }
@@ -889,6 +896,13 @@ html[data-theme="light"] .icon-moon {
 }
 .profile-card__sign:hover {
   opacity: 1;
+}
+/* 浅色主题下签名改为深色、平台图标换浅底，保证可读性 */
+html[data-theme="light"] .profile-card__sign {
+  filter: brightness(0) opacity(0.75);
+}
+html[data-theme="light"] .social {
+  background: #e9ebee;
 }
 
 /* ============ 页脚 ============ */
