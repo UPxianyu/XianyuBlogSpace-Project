@@ -1,0 +1,41 @@
+{
+  "siteName": "咸鱼的博客",
+  "heroName": "咸鱼",
+  "subtitle": "writing about games, code & daily life.",
+  "description": "个人兴趣与学习随笔：计算机学习经历、日常分享，以及游戏世界的探索——MC 原版、GTNH 整合包、FPS、GALGAME 与二游。",
+  "base": "/",
+  "themes": [
+    {
+      "name": "计算机学习",
+      "icon": "💻",
+      "desc": "学习路线、踩坑记录、技术随笔与读书笔记"
+    },
+    {
+      "name": "日常分享",
+      "icon": "🍵",
+      "desc": "生活碎片、工具安利、观影与碎碎念"
+    },
+    {
+      "name": "游戏",
+      "icon": "🎮",
+      "desc": "MC 原版与 GTNH 整合包、FPS、GALGAME、二游",
+      "subs": ["MC原版", "GTNH", "FPS", "GALGAME", "二游"]
+    }
+  ],
+  "about": "这里本该有一份正经的自我介绍，但我只是一条咸鱼，还没想好怎么写 🐟 等我翻身了再补上。",
+  "links": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/",
+      "desc": "托管服务"
+    },
+    {
+      "name": "DeepSeek",
+      "url": "https://www.deepseek.com/",
+      "desc": "开发主力"
+    }
+  ],
+  "footerText": "© 2026 咸鱼 · Powered by Codex",
+  "walineServer": "",
+  "statsEnabled": true
+}
