@@ -30,9 +30,14 @@ function loadSite() {
 
 const site = loadSite();
 const BASE = String(site.base || "/").replace(/\/?$/, "/");
+const SITE_URL = String(site.siteUrl || "").replace(/\/?$/, "");
 
 function url(p) {
   return BASE + String(p).replace(/^\//, "");
+}
+
+function absoluteUrl(p) {
+  return SITE_URL ? `${SITE_URL}/${String(p).replace(/^\//, "")}` : url(p);
 }
 
 function clean(obj) {
@@ -161,6 +166,11 @@ function renderIndex(posts) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="${R.escapeHtml(site.description || "")}">
   <title>${R.escapeHtml(site.siteName || "博客")}</title>
+  <meta property="og:title" content="${R.escapeHtml(site.siteName || "博客")}">
+  <meta property="og:type" content="website">
+  <meta property="og:description" content="${R.escapeHtml(site.description || "")}">
+  <meta property="og:image" content="${absoluteUrl("assets/og.jpg")}">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="${FAVICON}">
   <link rel="stylesheet" href="${url("css/style.css")}">
   <script src="${url("js/bg.js")}"></script>
@@ -263,6 +273,11 @@ function renderPostPage(p) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="${R.escapeHtml(p.excerpt)}">
   <title>${R.escapeHtml(p.title)} · ${R.escapeHtml(site.siteName || "博客")}</title>
+  <meta property="og:title" content="${R.escapeHtml(p.title)}">
+  <meta property="og:type" content="article">
+  <meta property="og:description" content="${R.escapeHtml(p.excerpt)}">
+  <meta property="og:image" content="${absoluteUrl("assets/og.jpg")}">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="${FAVICON}">
   <link rel="stylesheet" href="${url("css/style.css")}">
   <script src="${url("js/bg.js")}"></script>
@@ -339,8 +354,10 @@ function main() {
   fs.mkdirSync(path.join(DIST, "post"), { recursive: true });
   fs.mkdirSync(path.join(DIST, "css"), { recursive: true });
   fs.mkdirSync(path.join(DIST, "js"), { recursive: true });
+  fs.mkdirSync(path.join(DIST, "assets"), { recursive: true });
 
   R.copyDir(path.join(ROOT, "css"), path.join(DIST, "css"));
+  R.copyDir(path.join(ROOT, "assets"), path.join(DIST, "assets"));
   for (const f of ["main.js", "bg.js", "post.js"]) {
     fs.copyFileSync(path.join(ROOT, "js", f), path.join(DIST, "js", f));
   }
