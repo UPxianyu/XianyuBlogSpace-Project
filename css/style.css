@@ -629,7 +629,7 @@ html[data-theme="light"] .icon-moon {
   font-size: 14.5px;
   color: var(--text-dim);
   line-height: 1.8;
-  white-space: pre-line;
+  white-space: pre-wrap;
 }
 .theme-card {
   padding: 28px 26px;
