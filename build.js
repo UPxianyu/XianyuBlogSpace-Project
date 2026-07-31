@@ -192,9 +192,7 @@ function renderIndex(posts) {
   const themeCards = (site.themes || []).map(themeCardHtml).join("");
   const cards = posts.map(cardHtml).join("");
   const archive = posts.map(archiveItemHtml).join("");
-  const aboutPost =
-    posts.find((p) => p.id === "2026-08-01-about-me") || posts.find((p) => p.pinned);
-  const aboutHref = aboutPost ? url(`post/${encodeURIComponent(aboutPost.id)}.html`) : "";
+  const aboutHref = url("#about");
   const linkCards = (site.links || [])
     .map(
       (l) => `
