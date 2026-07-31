@@ -880,7 +880,7 @@ html[data-theme="light"] .icon-moon {
   color: #171a21;
 }
 .profile-card__sign {
-  width: 180px;
+  width: 140px;
   height: auto;
   opacity: 0.92;
   transition: opacity 0.25s ease;
