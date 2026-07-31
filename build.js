@@ -54,6 +54,7 @@ function toData(post) {
     excerpt: post.excerpt,
     cover: coverUrl(post),
     readingTime: R.readingTime(post.content),
+    pinned: post.pinned,
   };
 }
 
@@ -64,6 +65,7 @@ function cardHtml(p) {
   const sub = p.subcategory
     ? `<span class="post-card__tag post-card__tag--sub">${R.escapeHtml(p.subcategory)}</span>`
     : "";
+  const pin = p.pinned ? `<span class="post-card__pin">📌 置顶</span>` : "";
   return `
     <a class="post-card reveal" href="${url(`post/${encodeURIComponent(p.id)}.html`)}">
       ${cover}
@@ -71,6 +73,7 @@ function cardHtml(p) {
         <div class="post-card__meta">
           <span>${R.escapeHtml(p.date.replace(/-/g, "."))}</span>
           <span class="post-card__tag">${R.escapeHtml(p.category)}</span>${sub}
+          ${pin}
         </div>
         <h3 class="post-card__title">${R.escapeHtml(p.title)}</h3>
         <p class="post-card__excerpt">${R.escapeHtml(p.excerpt)}</p>
@@ -312,7 +315,12 @@ function main() {
     rawPosts = rawPosts.concat(examples);
     console.log(`已包含 ${examples.length} 篇示例帖（仅本地模式）`);
   }
-  rawPosts = rawPosts.filter((p) => p.published).sort((a, b) => b.date.localeCompare(a.date));
+  rawPosts = rawPosts
+    .filter((p) => p.published)
+    .sort((a, b) => {
+      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+      return b.date.localeCompare(a.date);
+    });
 
   const data = rawPosts.map(toData);
   const posts = rawPosts.map((p) => ({

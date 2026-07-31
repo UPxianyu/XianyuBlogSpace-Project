@@ -87,6 +87,7 @@ function cardHtml(p) {
   const sub = p.subcategory
     ? `<span class="post-card__tag post-card__tag--sub">${escapeHtml(p.subcategory)}</span>`
     : "";
+  const pin = p.pinned ? `<span class="post-card__pin">📌 置顶</span>` : "";
   return `
     <a class="post-card reveal" href="${url(`post/${encodeURIComponent(p.id)}.html`)}">
       ${cover}
@@ -94,6 +95,7 @@ function cardHtml(p) {
         <div class="post-card__meta">
           <span>${escapeHtml(p.date.replace(/-/g, "."))}</span>
           <span class="post-card__tag">${escapeHtml(p.category)}</span>${sub}
+          ${pin}
         </div>
         <h3 class="post-card__title">${escapeHtml(p.title)}</h3>
         <p class="post-card__excerpt">${escapeHtml(p.excerpt)}</p>
