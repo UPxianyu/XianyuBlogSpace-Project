@@ -38,7 +38,7 @@
     }
   ],
   "footerText": "© 2026 咸鱼 · Powered by Codex",
-  "walineServer": "",
+  "walineServer": "https://my-project-d1gtc6ovp0ea0089a.service.tcloudbase.com/waline",
   "walineCdn": "",
   "statsEnabled": true
 }
