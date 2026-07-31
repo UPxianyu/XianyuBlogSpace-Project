@@ -245,11 +245,16 @@ function renderPostPage(p) {
   const cover = coverUrl(p);
   const coverHtml = cover ? `<img class="post-article__cover" src="${cover}" alt="">` : "";
   const sub = p.subcategory ? `<span class="post-card__tag">${R.escapeHtml(p.subcategory)}</span>` : "";
+  const walineCdn = site.walineCdn || "https://unpkg.com/@waline/client@v3/dist";
   const walineHtml = site.walineServer
     ? `
-    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css">
+    <link rel="stylesheet" href="${walineCdn}/waline.css">
     <div id="waline"></div>
-    <script src="https://unpkg.com/@waline/client@v3/dist/waline.js"></script>`
+    <script type="module">
+      import { init } from "${walineCdn}/waline.js";
+      window.Waline = { init };
+      window.dispatchEvent(new Event("waline-ready"));
+    </script>`
     : `<p class="comments__notice">评论功能尚未配置（在 config/site.json 填写 walineServer 后重新构建即可）。</p>`;
   return `<!DOCTYPE html>
 <html lang="zh-CN" data-theme="dark">

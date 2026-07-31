@@ -33,21 +33,33 @@ function initPageView() {
 }
 
 /* ============ Waline 评论 ============ */
-function initWaline() {
-  if (!SITE.walineServer) return;
-  const el = $("#waline");
-  if (!el || typeof Waline === "undefined") {
-    const notice = document.querySelector(".comments__notice");
-    if (notice) notice.textContent = "评论组件加载失败（可能是网络原因），请稍后刷新重试。";
-    return;
-  }
+function startWaline() {
   Waline.init({
     el: "#waline",
     serverURL: SITE.walineServer,
     lang: "zh-CN",
     pageSize: 10,
     requiredFields: ["nick"],
+    dark: 'html[data-theme="dark"]',
   });
+}
+
+function initWaline() {
+  if (!SITE.walineServer) return;
+  const el = $("#waline");
+  if (!el) return;
+  if (typeof Waline !== "undefined") {
+    startWaline();
+    return;
+  }
+  // Waline v3 是 ESM 模块，加载完成前先等待 waline-ready 事件
+  window.addEventListener("waline-ready", startWaline, { once: true });
+  setTimeout(() => {
+    if (typeof Waline === "undefined") {
+      const notice = document.querySelector(".comments__notice");
+      if (notice) notice.textContent = "评论组件加载失败（可能是网络原因），请稍后刷新重试。";
+    }
+  }, 15000);
 }
 
 /* ============ 初始化 ============ */

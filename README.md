@@ -122,20 +122,22 @@ git push             # 推送后自动重新构建并上线
 ## 游客评论（Waline）
 
 评论用 [Waline](https://waline.js.org) 实现：游客自定义昵称、免登录，
-删除/审核评论在 Waline 管理后台完成。
+删除/审核评论在 Waline 管理后台完成。完整图文步骤见
+[docs/评论配置指南.md](docs/评论配置指南.md)。
 
-1. 按 [Waline 官方文档](https://waline.js.org/guide/get-started/) 部署后端
-   （推荐 Vercel + LeanCloud，免费额度足够）
-2. 把服务地址填入 `config/site.json`：
+1. 按官方文档部署后端（推荐 **Vercel + Neon**）：
+   <https://waline.js.org/guide/deploy/vercel.html>
+2. 把服务地址填入 `config/site.json`（可选填 `walineCdn` 切换国内 CDN）：
 
 ```json
 {
-  "walineServer": "https://your-waline.vercel.app"
+  "walineServer": "https://xianyu-waline.vercel.app"
 }
 ```
 
-3. 重新 `node build.js` 并推送
-4. 评论管理入口：`https://your-waline.vercel.app/ui`
+3. 建议在 Vercel 配置 `SECURE_DOMAINS` 环境变量，防止接口被盗用
+4. 重新 `node build.js` 并推送
+5. 评论管理入口：`https://xianyu-waline.vercel.app/ui`
 
 ## 背景预览
 
