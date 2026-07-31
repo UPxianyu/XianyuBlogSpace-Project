@@ -17,7 +17,6 @@ const POSTS_DIR = path.join(ROOT, "content", "posts");
 const EXAMPLES_DIR = path.join(ROOT, "content", "examples");
 const CONFIG_FILE = path.join(ROOT, "config", "site.json");
 const DIST = path.join(ROOT, "dist");
-const FAVICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌘</text></svg>";
 const WITH_EXAMPLES = process.argv.includes("--examples");
 
 function loadSite() {
@@ -171,7 +170,8 @@ function renderIndex(posts) {
   <meta property="og:description" content="${R.escapeHtml(site.description || "")}">
   <meta property="og:image" content="${absoluteUrl("assets/og.jpg")}">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="${FAVICON}">
+  <link rel="icon" type="image/png" href="${url("assets/favicon.png")}">
+  <link rel="apple-touch-icon" href="${url("assets/apple-touch-icon.png")}">
   <link rel="stylesheet" href="${url("css/style.css")}">
   <script src="${url("js/bg.js")}"></script>
 </head>
@@ -278,7 +278,8 @@ function renderPostPage(p) {
   <meta property="og:description" content="${R.escapeHtml(p.excerpt)}">
   <meta property="og:image" content="${absoluteUrl("assets/og.jpg")}">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="${FAVICON}">
+  <link rel="icon" type="image/png" href="${url("assets/favicon.png")}">
+  <link rel="apple-touch-icon" href="${url("assets/apple-touch-icon.png")}">
   <link rel="stylesheet" href="${url("css/style.css")}">
   <script src="${url("js/bg.js")}"></script>
 </head>
