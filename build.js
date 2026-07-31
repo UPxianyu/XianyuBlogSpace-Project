@@ -278,7 +278,7 @@ function renderPostPage(p) {
           <span>${R.escapeHtml(p.date.replace(/-/g, "."))}</span>
           <span class="post-card__tag">${R.escapeHtml(p.category)}</span>${sub}
           <span>约 ${p.readingTime} 分钟读完</span>
-          ${site.statsEnabled !== false ? `<span class="post-article__pv">阅读 <b id="pagePv">--</b></span>` : ""}
+          ${site.statsEnabled !== false ? `<span class="post-article__pv">阅读 <b id="busuanzi_value_page_pv">--</b></span>` : ""}
         </div>
         ${p.tags.length ? `<div class="post-article__tags">${p.tags.map((t) => `<span class="post-article__tag"># ${R.escapeHtml(t)}</span>`).join("")}</div>` : ""}
       </header>
@@ -326,6 +326,7 @@ function main() {
   const posts = rawPosts.map((p) => ({
     ...p,
     html: R.renderMarkdown(p.content, url(`media/${p.id}/`)),
+    readingTime: R.readingTime(p.content),
     data: toData(p),
   }));
 

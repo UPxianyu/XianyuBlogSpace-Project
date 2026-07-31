@@ -19,7 +19,7 @@ function initTheme() {
 
 /* ============ 阅读量（不蒜子，带降级） ============ */
 function initPageView() {
-  const el = $("#pagePv");
+  const el = $("#busuanzi_value_page_pv");
   if (!el) return;
   if (SITE.statsEnabled === false) {
     el.textContent = "—";
