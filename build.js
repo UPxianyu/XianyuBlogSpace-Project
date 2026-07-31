@@ -339,9 +339,34 @@ function main() {
     fs.copyFileSync(path.join(ROOT, "js", f), path.join(DIST, "js", f));
   }
 
+  // 帖子图片：优先复制帖子专属 images/ 目录，再补齐公共 content/posts/images/ 里被引用的文件
   for (const p of rawPosts) {
-    const srcDir = path.join(path.dirname(p.file), p.id, "images");
-    if (fs.existsSync(srcDir)) R.copyDir(srcDir, path.join(DIST, "media", p.id));
+    const postDir = path.join(path.dirname(p.file), p.id);
+    const perPostImages = path.join(postDir, "images");
+    const sharedImages = path.join(path.dirname(p.file), "images");
+
+    if (fs.existsSync(perPostImages)) {
+      R.copyDir(perPostImages, path.join(DIST, "media", p.id));
+    }
+
+    // 收集这篇帖子引用的所有 images/ 文件（头图 + 正文插图）
+    const refs = new Set();
+    if (p.cover && p.cover.startsWith("images/")) {
+      refs.add(p.cover.slice("images/".length));
+    }
+    const imgRe = /!\[[^\]]*\]\(images\/([^)\s]+)\)/g;
+    let m;
+    while ((m = imgRe.exec(p.content))) refs.add(m[1]);
+
+    for (const name of refs) {
+      const dest = path.join(DIST, "media", p.id, name);
+      if (fs.existsSync(dest)) continue;
+      const fromShared = path.join(sharedImages, name);
+      if (fs.existsSync(fromShared)) {
+        fs.mkdirSync(path.dirname(dest), { recursive: true });
+        fs.copyFileSync(fromShared, dest);
+      }
+    }
   }
 
   fs.writeFileSync(path.join(DIST, "index.html"), renderIndex(data), "utf8");
