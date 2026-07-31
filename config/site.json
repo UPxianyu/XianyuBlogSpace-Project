@@ -1,8 +1,10 @@
 {
   "siteName": "咸鱼的博客",
   "heroName": "咸鱼",
-  "subtitle": "writing about games, code & daily life.",
-  "description": "个人兴趣与学习随笔：计算机学习经历、日常分享，以及游戏世界的探索——MC 原版、GTNH 整合包、FPS、GALGAME 与二游。",
+  "uid": "UPxianyu",
+  "location": "GuangZhou CN",
+  "subtitle": "计算机学习、游戏和日常碎碎念...",
+  "description": "工厂游戏爱好者、课堂在逃咸鱼🐟",
   "base": "/",
   "themes": [
     {

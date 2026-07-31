@@ -181,11 +181,11 @@ function renderIndex(posts) {
         <a class="btn btn--ghost" href="${url("#themes")}">查看主题</a>
       </div>
       <div class="hero__meta">
-        <span><b>ID</b> ${R.escapeHtml(site.heroName || "")}</span>
+        <span><b>ID</b> ${R.escapeHtml(site.uid || site.heroName || "")}</span>
         <span class="hero__meta-dot">·</span>
         <span><b>EST</b> 2026</span>
         <span class="hero__meta-dot">·</span>
-        <span><b>LOC</b> Shanghai, CN</span>
+        <span><b>LOC</b> ${R.escapeHtml(site.location || "")}</span>
       </div>
     </section>
 
