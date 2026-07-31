@@ -825,6 +825,8 @@ html[data-theme="light"] .icon-moon {
   align-items: start;
 }
 .home-side {
+  position: sticky;
+  top: 96px;
   padding: 96px 0 40px;
 }
 .profile-card {
