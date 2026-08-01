@@ -12,12 +12,41 @@ const fs = require("fs");
 const path = require("path");
 const R = require("./lib/render");
 
+let sharp;
+try {
+  sharp = require("sharp");
+} catch {
+  console.error("缺少依赖 sharp，请先执行：npm install");
+  process.exit(1);
+}
+
 const ROOT = __dirname;
 const POSTS_DIR = path.join(ROOT, "content", "posts");
 const EXAMPLES_DIR = path.join(ROOT, "content", "examples");
 const CONFIG_FILE = path.join(ROOT, "config", "site.json");
 const DIST = path.join(ROOT, "dist");
 const WITH_EXAMPLES = process.argv.includes("--examples");
+const MAX_IMAGE_WIDTH = 1600;
+const WEBP_QUALITY = 80;
+const IMAGE_EXT = /\.(jpe?g|png|webp)$/i;
+
+function imageStem(name) {
+  return String(name).replace(IMAGE_EXT, "");
+}
+
+async function processToWebp(src, destDir, name, imgInfo) {
+  fs.mkdirSync(destDir, { recursive: true });
+  if (!IMAGE_EXT.test(name)) {
+    fs.copyFileSync(src, path.join(destDir, name));
+    return;
+  }
+  const meta = await sharp(src, { failOn: "none" })
+    .rotate()
+    .resize({ width: MAX_IMAGE_WIDTH, withoutEnlargement: true })
+    .webp({ quality: WEBP_QUALITY })
+    .toFile(path.join(destDir, imageStem(name) + ".webp"));
+  imgInfo[imageStem(name).toLowerCase()] = { w: meta.width, h: meta.height };
+}
 
 function loadSite() {
   try {
@@ -44,7 +73,9 @@ function clean(obj) {
 }
 
 function coverUrl(post) {
-  return post.cover ? url(`media/${post.id}/${path.basename(post.cover)}`) : "";
+  return post.cover
+    ? url(`media/${post.id}/${imageStem(path.basename(post.cover))}.webp`)
+    : "";
 }
 
 function toData(post) {
@@ -348,7 +379,7 @@ function renderPostPage(p) {
           <span>${R.escapeHtml(p.date.replace(/-/g, "."))}</span>
           <span class="post-card__tag">${R.escapeHtml(p.category)}</span>${sub}
           <span>约 ${p.readingTime} 分钟读完</span>
-          ${site.statsEnabled !== false ? `<span class="post-article__pv">阅读 <b id="busuanzi_value_page_pv">--</b></span>` : ""}
+          ${site.statsEnabled !== false ? `<span class="post-article__pv">阅读 <b class="waline-pageview-count" data-path="${url(`post/${p.id}.html`)}">--</b></span>` : ""}
         </div>
         ${p.tags.length ? `<div class="post-article__tags">${p.tags.map((t) => `<span class="post-article__tag"># ${R.escapeHtml(t)}</span>`).join("")}</div>` : ""}
       </header>
@@ -362,7 +393,6 @@ function renderPostPage(p) {
   </main>
   ${footerHtml(site)}
   <script>window.BLOG_SITE = ${clean(site)}; window.BLOG_POST = ${clean(p.data)};</script>
-  ${site.statsEnabled !== false ? `<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>` : ""}
   <script src="${url("js/post.js")}"></script>
 </body>
 </html>`;
@@ -378,7 +408,7 @@ function loadPostsFrom(dir) {
   }));
 }
 
-function main() {
+async function main() {
   let rawPosts = loadPostsFrom(POSTS_DIR);
   if (WITH_EXAMPLES) {
     const examples = loadPostsFrom(EXAMPLES_DIR);
@@ -391,14 +421,6 @@ function main() {
       if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
       return b.date.localeCompare(a.date);
     });
-
-  const data = rawPosts.map(toData);
-  const posts = rawPosts.map((p) => ({
-    ...p,
-    html: R.renderMarkdown(p.content, url(`media/${p.id}/`)),
-    readingTime: R.readingTime(p.content),
-    data: toData(p),
-  }));
 
   fs.rmSync(DIST, { recursive: true, force: true });
   fs.mkdirSync(path.join(DIST, "post"), { recursive: true });
@@ -416,17 +438,24 @@ function main() {
     fs.copyFileSync(path.join(ROOT, "CNAME"), path.join(DIST, "CNAME"));
   }
 
-  // 帖子图片：优先复制帖子专属 images/ 目录，再补齐公共 content/posts/images/ 里被引用的文件
+  // 帖子图片：优先处理帖子专属 images/ 目录，再补齐公共 content/posts/images/ 里被引用的文件。
+  // 统一压缩为 WebP 并记录宽高，渲染正文时使用。
   for (const p of rawPosts) {
     const postDir = path.join(path.dirname(p.file), p.id);
     const perPostImages = path.join(postDir, "images");
     const sharedImages = path.join(path.dirname(p.file), "images");
+    const mediaDir = path.join(DIST, "media", p.id);
+    const imgInfo = {};
 
     if (fs.existsSync(perPostImages)) {
-      R.copyDir(perPostImages, path.join(DIST, "media", p.id));
+      for (const name of fs.readdirSync(perPostImages)) {
+        const src = path.join(perPostImages, name);
+        if (fs.statSync(src).isFile()) {
+          await processToWebp(src, mediaDir, name, imgInfo);
+        }
+      }
     }
 
-    // 收集这篇帖子引用的所有 images/ 文件（头图 + 正文插图）
     const refs = new Set();
     if (p.cover && p.cover.startsWith("images/")) {
       refs.add(p.cover.slice("images/".length));
@@ -436,15 +465,22 @@ function main() {
     while ((m = imgRe.exec(p.content))) refs.add(m[1]);
 
     for (const name of refs) {
-      const dest = path.join(DIST, "media", p.id, name);
-      if (fs.existsSync(dest)) continue;
+      if (imgInfo[imageStem(name).toLowerCase()]) continue;
       const fromShared = path.join(sharedImages, name);
       if (fs.existsSync(fromShared)) {
-        fs.mkdirSync(path.dirname(dest), { recursive: true });
-        fs.copyFileSync(fromShared, dest);
+        await processToWebp(fromShared, mediaDir, name, imgInfo);
       }
     }
+    p.imgInfo = imgInfo;
   }
+
+  const data = rawPosts.map(toData);
+  const posts = rawPosts.map((p) => ({
+    ...p,
+    html: R.renderMarkdown(p.content, url(`media/${p.id}/`), p.imgInfo),
+    readingTime: R.readingTime(p.content),
+    data: toData(p),
+  }));
 
   fs.writeFileSync(path.join(DIST, "index.html"), renderIndex(data), "utf8");
   for (const p of posts) {
@@ -462,4 +498,7 @@ function main() {
   console.log("本地预览：node server.js 后访问 http://localhost:3000");
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

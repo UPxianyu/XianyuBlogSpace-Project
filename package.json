@@ -2,11 +2,14 @@
   "name": "p1-blog",
   "version": "1.0.0",
   "private": true,
-  "description": "零依赖个人博客：Markdown 帖子上传、分类、游客评论",
+  "description": "个人博客：Markdown 帖子上传、分类、游客评论",
   "scripts": {
     "start": "node server.js"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18.17"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.3"
   }
 }

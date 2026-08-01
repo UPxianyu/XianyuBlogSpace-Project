@@ -19,17 +19,18 @@ function initTheme() {
 
 /* ============ 阅读量（不蒜子，带降级） ============ */
 function initPageView() {
-  const el = $("#busuanzi_value_page_pv");
+  const el = $(".waline-pageview-count");
   if (!el) return;
   if (SITE.statsEnabled === false) {
-    el.textContent = "—";
+    el.textContent = "–";
     return;
   }
   setTimeout(() => {
-    if (el.textContent.trim() === "--" || el.textContent.trim() === "") {
-      el.textContent = "—";
+    const v = el.textContent.trim();
+    if (v === "--" || v === "") {
+      el.textContent = "–";
     }
-  }, 4000);
+  }, 10000);
 }
 
 /* ============ Waline 评论 ============ */
@@ -37,6 +38,7 @@ function startWaline() {
   Waline.init({
     el: "#waline",
     serverURL: SITE.walineServer,
+    pageview: true,
     lang: "zh-CN",
     pageSize: 10,
     meta: ["nick"],

@@ -1,11 +1,12 @@
 # P1-Blog · 咸鱼的博客
 
 静态个人博客：兴趣与学习随笔（计算机学习 / 日常分享 / 游戏）。
-零 npm 依赖，只需要 Node.js（≥16）。
+只需要 Node.js（≥18.17），依赖仅用于构建时图片压缩（sharp）。
 
 ## 快速开始
 
 ```bash
+npm install            # 首次安装依赖（含图片压缩用的 sharp）
 node build.js            # 生成 dist/（仅正式帖子）
 node server.js           # 本地预览 http://localhost:3000
 ```
@@ -41,7 +42,8 @@ published: true
 列表、表格、引用、代码块，以及文间图 `![](images/xxx.png)`。
 ```
 
-图片放在与文章同级的 `images/` 文件夹：
+图片放在与文章同级的 `images/` 文件夹（构建时自动压缩为 WebP，
+最长边 1600px，正文图自动带上宽高属性防止布局抖动）：
 
 ```text
 content/posts/2026-08-01-gtnh-first-month/
@@ -117,7 +119,8 @@ git push             # 推送后自动重新构建并上线
 - 首页：ID 咸鱼、"这是咸鱼的小站" Hero + 主题打字机、三大主题卡（游戏含 5 个子类）、标题搜索、分类筛选、封面卡片、归档、关于（占位）、友链（GitHub / DeepSeek）
 - 文章页：头图、正文（中英/emoji/小标题/表格/代码块/文间图）、阅读量、Waline 评论
 - 随机背景：6 款（grid / aurora / dots / circuit / nebula / diagonal），`?bg=名字` 固定预览
-- 阅读量：不蒜子（busuanzi），加载失败自动降级
+- 阅读量：Waline 浏览量统计（pageview），与评论共用后端，加载失败自动降级
+- 图片：构建时自动压缩为 WebP，单张相机原图（数 MB）可降到几百 KB
 
 ## 游客评论（Waline）
 
