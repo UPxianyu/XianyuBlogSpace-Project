@@ -411,6 +411,10 @@ function main() {
   for (const f of ["main.js", "bg.js", "post.js"]) {
     fs.copyFileSync(path.join(ROOT, "js", f), path.join(DIST, "js", f));
   }
+  // 自定义域名（GitHub Pages 部署必需）
+  if (fs.existsSync(path.join(ROOT, "CNAME"))) {
+    fs.copyFileSync(path.join(ROOT, "CNAME"), path.join(DIST, "CNAME"));
+  }
 
   // 帖子图片：优先复制帖子专属 images/ 目录，再补齐公共 content/posts/images/ 里被引用的文件
   for (const p of rawPosts) {
