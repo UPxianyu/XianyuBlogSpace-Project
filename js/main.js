@@ -30,7 +30,12 @@ function filteredPosts() {
   return POSTS.filter((p) => {
     if (activeCat !== "全部" && p.category !== activeCat) return false;
     if (activeCat === "游戏" && activeSub && p.subcategory !== activeSub) return false;
-    if (q && !p.title.toLowerCase().includes(q)) return false;
+    if (q) {
+      const hay = [p.title, p.category, p.subcategory, p.excerpt, (p.tags || []).join(" ")]
+        .join(" ")
+        .toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
     return true;
   });
 }

@@ -13,6 +13,15 @@
   --glow-a: rgba(76, 201, 240, 0.14);
   --glow-b: rgba(139, 92, 246, 0.12);
   --code: #e0af68;
+  --hl-keyword: #ff7b72;
+  --hl-string: #a5d6ff;
+  --hl-comment: #8b949e;
+  --hl-number: #79c0ff;
+  --hl-title: #d2a8ff;
+  --hl-attr: #79c0ff;
+  --hl-tag: #7ee787;
+  --hl-meta: #ffa657;
+  --hl-deletion: #ffdcd7;
   --radius: 12px;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
@@ -31,6 +40,15 @@ html[data-theme="light"] {
   --glow-a: rgba(8, 145, 178, 0.12);
   --glow-b: rgba(124, 58, 237, 0.1);
   --code: #b45309;
+  --hl-keyword: #cf222e;
+  --hl-string: #0a3069;
+  --hl-comment: #6e7781;
+  --hl-number: #0550ae;
+  --hl-title: #8250df;
+  --hl-attr: #0550ae;
+  --hl-tag: #116329;
+  --hl-meta: #953800;
+  --hl-deletion: #82071e;
   --shadow: 0 12px 36px rgba(15, 23, 42, 0.1);
 }
 
@@ -1262,6 +1280,58 @@ html[data-theme="light"] .post-content pre {
 }
 html[data-theme="light"] .post-content pre code {
   color: #334155;
+}
+.post-content pre code .hljs-keyword,
+.post-content pre code .hljs-built_in,
+.post-content pre code .hljs-literal,
+.post-content pre code .hljs-type,
+.post-content pre code .hljs-operator {
+  color: var(--hl-keyword);
+}
+.post-content pre code .hljs-string,
+.post-content pre code .hljs-regexp,
+.post-content pre code .hljs-symbol,
+.post-content pre code .hljs-addition {
+  color: var(--hl-string);
+}
+.post-content pre code .hljs-comment,
+.post-content pre code .hljs-quote {
+  color: var(--hl-comment);
+  font-style: italic;
+}
+.post-content pre code .hljs-number {
+  color: var(--hl-number);
+}
+.post-content pre code .hljs-title,
+.post-content pre code .hljs-title.class_,
+.post-content pre code .hljs-function,
+.post-content pre code .hljs-section {
+  color: var(--hl-title);
+}
+.post-content pre code .hljs-attr,
+.post-content pre code .hljs-attribute,
+.post-content pre code .hljs-property,
+.post-content pre code .hljs-variable,
+.post-content pre code .hljs-template-variable,
+.post-content pre code .hljs-params {
+  color: var(--hl-attr);
+}
+.post-content pre code .hljs-meta,
+.post-content pre code .hljs-doctag,
+.post-content pre code .hljs-name,
+.post-content pre code .hljs-selector-tag,
+.post-content pre code .hljs-selector-class,
+.post-content pre code .hljs-tag {
+  color: var(--hl-tag);
+}
+.post-content pre code .hljs-deletion {
+  color: var(--hl-deletion);
+}
+.post-content pre code .hljs-emphasis {
+  font-style: italic;
+}
+.post-content pre code .hljs-strong {
+  font-weight: 700;
 }
 .post-content blockquote {
   margin: 1.3em 0;

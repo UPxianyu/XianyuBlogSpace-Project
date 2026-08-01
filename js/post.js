@@ -3,6 +3,7 @@
 const SITE = window.BLOG_SITE || {};
 
 const $ = (sel) => document.querySelector(sel);
+const WALINE_CDN = SITE.walineCdn || "https://unpkg.com/@waline/client@v3/dist";
 
 /* ============ 主题切换 ============ */
 function initTheme() {
@@ -17,13 +18,20 @@ function initTheme() {
   });
 }
 
-/* ============ 阅读量（不蒜子，带降级） ============ */
+/* ============ 阅读量（Waline 独立 pageview 模块，带降级） ============ */
 function initPageView() {
   const el = $(".waline-pageview-count");
   if (!el) return;
   if (SITE.statsEnabled === false) {
     el.textContent = "–";
     return;
+  }
+  if (SITE.walineServer) {
+    import(`${WALINE_CDN}/pageview.js`)
+      .then(({ pageviewCount }) => {
+        pageviewCount({ serverURL: SITE.walineServer, path: window.location.pathname });
+      })
+      .catch(() => {});
   }
   setTimeout(() => {
     const v = el.textContent.trim();
@@ -38,13 +46,24 @@ function startWaline() {
   Waline.init({
     el: "#waline",
     serverURL: SITE.walineServer,
-    pageview: true,
     lang: "zh-CN",
     pageSize: 10,
     meta: ["nick"],
     requiredMeta: ["nick"],
     dark: 'html[data-theme="dark"]',
   });
+}
+
+/* ============ 评论组件按需加载：滚近评论区才拉取 CSS/JS ============ */
+function loadWalineAssets() {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = `${WALINE_CDN}/waline.css`;
+  document.head.appendChild(link);
+  const script = document.createElement("script");
+  script.type = "module";
+  script.textContent = `import { init } from "${WALINE_CDN}/waline.js"; window.Waline = { init }; window.dispatchEvent(new Event("waline-ready"));`;
+  document.body.appendChild(script);
 }
 
 function initWaline() {
@@ -55,14 +74,39 @@ function initWaline() {
     startWaline();
     return;
   }
-  // Waline v3 是 ESM 模块，加载完成前先等待 waline-ready 事件
   window.addEventListener("waline-ready", startWaline, { once: true });
-  setTimeout(() => {
-    if (typeof Waline === "undefined") {
-      const notice = document.querySelector(".comments__notice");
-      if (notice) notice.textContent = "评论组件加载失败（可能是网络原因），请稍后刷新重试。";
-    }
-  }, 15000);
+  const trigger = () => {
+    loadWalineAssets();
+    setTimeout(() => {
+      if (typeof Waline === "undefined") {
+        const notice = document.querySelector(".comments__notice");
+        if (notice) notice.textContent = "评论组件加载失败（可能是网络原因），请稍后刷新重试。";
+      }
+    }, 15000);
+  };
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          trigger();
+        }
+      },
+      { rootMargin: "400px 0px" }
+    );
+    io.observe(el);
+  } else {
+    trigger();
+  }
+}
+
+/* ============ 代码高亮（highlight.js，加载失败则静默跳过） ============ */
+function initHighlight() {
+  if (window.hljs && typeof hljs.highlightAll === "function") {
+    try {
+      hljs.highlightAll();
+    } catch (e) {}
+  }
 }
 
 /* ============ 初始化 ============ */
@@ -70,4 +114,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initPageView();
   initWaline();
+  initHighlight();
 });

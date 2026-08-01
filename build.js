@@ -68,6 +68,67 @@ function absoluteUrl(p) {
   return SITE_URL ? `${SITE_URL}/${String(p).replace(/^\//, "")}` : url(p);
 }
 
+// 内联到 <head>：提前应用本地主题偏好，避免浅色主题用户看到深色闪烁；
+// 同时设置随机/指定背景（原 js/bg.js 的逻辑）
+const HEAD_INLINE_SCRIPT = `<script>
+(function () {
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  } catch (e) {}
+  var bgs = ["grid", "aurora", "dots", "circuit", "nebula", "diagonal"];
+  var bg = new URLSearchParams(location.search).get("bg");
+  if (bgs.indexOf(bg) === -1) bg = bgs[Math.floor(Math.random() * bgs.length)];
+  document.documentElement.setAttribute("data-bg", bg);
+})();
+</script>`;
+
+function feedXml(posts) {
+  const siteUrl = SITE_URL ? `${SITE_URL}/` : url("");
+  const items = posts
+    .map(
+      (p) => `    <item>
+      <title>${R.escapeHtml(p.title)}</title>
+      <link>${absoluteUrl(`post/${encodeURIComponent(p.id)}.html`)}</link>
+      <guid>${absoluteUrl(`post/${encodeURIComponent(p.id)}.html`)}</guid>
+      <pubDate>${new Date(`${p.date}T00:00:00+08:00`).toUTCString()}</pubDate>
+      <description>${R.escapeHtml(p.excerpt)}</description>
+    </item>`
+    )
+    .join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>${R.escapeHtml(site.siteName || "博客")}</title>
+    <link>${siteUrl}</link>
+    <description>${R.escapeHtml(site.description || "")}</description>
+    <language>zh-CN</language>
+${items}
+  </channel>
+</rss>
+`;
+}
+
+function sitemapXml(posts) {
+  const entries = [
+    { loc: absoluteUrl(""), lastmod: posts[0] ? posts[0].date : new Date().toISOString().slice(0, 10) },
+    ...posts.map((p) => ({ loc: absoluteUrl(`post/${encodeURIComponent(p.id)}.html`), lastmod: p.date })),
+  ];
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod}</lastmod></url>`).join("\n")}
+</urlset>
+`;
+}
+
+function robotsTxt() {
+  return `User-agent: *
+Allow: /
+
+Sitemap: ${absoluteUrl("sitemap.xml")}
+`;
+}
+
 function clean(obj) {
   return JSON.stringify(obj).replace(/</g, "\\u003c");
 }
@@ -204,9 +265,9 @@ function profileSideHtml(aboutHref) {
     .join("");
   const avatarHtml = aboutHref
     ? `<a class="profile-card__avatar-link" href="${aboutHref}" aria-label="自我介绍">
-        <img class="profile-card__avatar" src="${url("assets/og.jpg")}" alt="${R.escapeHtml(site.heroName || "avatar")}">
+        <img class="profile-card__avatar" src="${url("assets/avatar.webp")}" alt="${R.escapeHtml(site.heroName || "avatar")}">
       </a>`
-    : `<img class="profile-card__avatar" src="${url("assets/og.jpg")}" alt="${R.escapeHtml(site.heroName || "avatar")}">`;
+    : `<img class="profile-card__avatar" src="${url("assets/avatar.webp")}" alt="${R.escapeHtml(site.heroName || "avatar")}">`;
   return `
     <aside class="home-side">
       <div class="profile-card">
@@ -247,8 +308,10 @@ function renderIndex(posts) {
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="${url("assets/favicon.png")}">
   <link rel="apple-touch-icon" href="${url("assets/apple-touch-icon.png")}">
+  <link rel="canonical" href="${absoluteUrl("")}">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="${absoluteUrl("feed.xml")}">
   <link rel="stylesheet" href="${url("css/style.css")}">
-  <script src="${url("js/bg.js")}"></script>
+  ${HEAD_INLINE_SCRIPT}
 </head>
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
@@ -291,7 +354,7 @@ function renderIndex(posts) {
         <h2><span class="section__tag">02</span> 文章</h2>
       </div>
       <div class="search">
-        <input type="search" id="searchInput" placeholder="搜索文章标题…" autocomplete="off">
+        <input type="search" id="searchInput" placeholder="搜索标题、标签、摘要…" autocomplete="off" aria-label="搜索文章">
       </div>
       <div class="filters" id="filters" aria-label="分类筛选"></div>
       <div class="posts" id="postList">${cards}</div>
@@ -334,17 +397,10 @@ function renderIndex(posts) {
 function renderPostPage(p) {
   const cover = coverUrl(p);
   const coverHtml = cover ? `<img class="post-article__cover" src="${cover}" alt="">` : "";
+  const ogImage = cover ? absoluteUrl(cover) : absoluteUrl("assets/og.jpg");
   const sub = p.subcategory ? `<span class="post-card__tag">${R.escapeHtml(p.subcategory)}</span>` : "";
-  const walineCdn = site.walineCdn || "https://unpkg.com/@waline/client@v3/dist";
   const walineHtml = site.walineServer
-    ? `
-    <link rel="stylesheet" href="${walineCdn}/waline.css">
-    <div id="waline"></div>
-    <script type="module">
-      import { init } from "${walineCdn}/waline.js";
-      window.Waline = { init };
-      window.dispatchEvent(new Event("waline-ready"));
-    </script>`
+    ? `<div id="waline"><p class="comments__notice">评论区加载中…</p></div>`
     : `<p class="comments__notice">评论功能尚未配置（在 config/site.json 填写 walineServer 后重新构建即可）。</p>`;
   return `<!DOCTYPE html>
 <html lang="zh-CN" data-theme="dark">
@@ -356,12 +412,15 @@ function renderPostPage(p) {
   <meta property="og:title" content="${R.escapeHtml(p.title)}">
   <meta property="og:type" content="article">
   <meta property="og:description" content="${R.escapeHtml(p.excerpt)}">
-  <meta property="og:image" content="${absoluteUrl("assets/og.jpg")}">
+  <meta property="og:image" content="${ogImage}">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="${url("assets/favicon.png")}">
   <link rel="apple-touch-icon" href="${url("assets/apple-touch-icon.png")}">
+  <link rel="canonical" href="${absoluteUrl(`post/${p.id}.html`)}">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="${absoluteUrl("feed.xml")}">
   <link rel="stylesheet" href="${url("css/style.css")}">
-  <script src="${url("js/bg.js")}"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/common.min.js"></script>
+  ${HEAD_INLINE_SCRIPT}
 </head>
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
@@ -430,7 +489,7 @@ async function main() {
 
   R.copyDir(path.join(ROOT, "css"), path.join(DIST, "css"));
   R.copyDir(path.join(ROOT, "assets"), path.join(DIST, "assets"));
-  for (const f of ["main.js", "bg.js", "post.js"]) {
+  for (const f of ["main.js", "post.js"]) {
     fs.copyFileSync(path.join(ROOT, "js", f), path.join(DIST, "js", f));
   }
   // 自定义域名（GitHub Pages 部署必需）
@@ -486,6 +545,9 @@ async function main() {
   for (const p of posts) {
     fs.writeFileSync(path.join(DIST, "post", `${p.id}.html`), renderPostPage(p), "utf8");
   }
+  fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt(), "utf8");
+  fs.writeFileSync(path.join(DIST, "sitemap.xml"), sitemapXml(data), "utf8");
+  fs.writeFileSync(path.join(DIST, "feed.xml"), feedXml(data), "utf8");
 
   fs.writeFileSync(
     path.join(DIST, "404.html"),

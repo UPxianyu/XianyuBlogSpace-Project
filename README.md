@@ -121,6 +121,8 @@ git push             # 推送后自动重新构建并上线
 - 随机背景：6 款（grid / aurora / dots / circuit / nebula / diagonal），`?bg=名字` 固定预览
 - 阅读量：Waline 浏览量统计（pageview），与评论共用后端，加载失败自动降级
 - 图片：构建时自动压缩为 WebP，单张相机原图（数 MB）可降到几百 KB
+- 代码块：highlight.js 高亮（跟随明暗主题），评论组件滚动到附近才加载
+- SEO：每篇文章独立 OG 分享图、canonical、sitemap.xml、robots.txt、RSS feed
 
 ## 游客评论（Waline）
 
@@ -128,19 +130,21 @@ git push             # 推送后自动重新构建并上线
 删除/审核评论在 Waline 管理后台完成。完整图文步骤见
 [docs/评论配置指南.md](docs/评论配置指南.md)。
 
-1. 按官方文档部署后端（推荐 **Vercel + Neon**）：
-   <https://waline.js.org/guide/deploy/vercel.html>
-2. 把服务地址填入 `config/site.json`（可选填 `walineCdn` 切换国内 CDN）：
+当前博客使用 **腾讯云 CloudBase**（CLI 部署）托管 Waline，也支持
+Vercel / Render 等方案，详见评论配置指南。
+
+1. 把服务地址填入 `config/site.json`（可选填 `walineCdn` 切换国内 CDN）：
 
 ```json
 {
-  "walineServer": "https://xianyu-waline.vercel.app"
+  "walineServer": "https://my-project-d1gtc6ovp0ea0089a.service.tcloudbase.com/waline",
+  "walineCdn": "https://cdn.jsdelivr.net/npm/@waline/client@v3/dist"
 }
 ```
 
-3. 建议在 Vercel 配置 `SECURE_DOMAINS` 环境变量，防止接口被盗用
-4. 重新 `node build.js` 并推送
-5. 评论管理入口：`https://xianyu-waline.vercel.app/ui`
+2. 服务端配置 `SECURE_DOMAINS` 环境变量（需包含你的博客域名），防止接口被盗用
+3. 重新 `node build.js` 并推送
+4. 评论管理入口：`https://my-project-d1gtc6ovp0ea0089a.service.tcloudbase.com/waline/ui`
 
 ## 背景预览
 
