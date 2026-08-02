@@ -965,6 +965,61 @@ html[data-theme="light"] .social {
   color: var(--accent);
 }
 
+/* ============ 首页入场动画 ============ */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero__kicker,
+.hero__title,
+.hero__desc,
+.hero__actions,
+.hero__meta {
+  animation: fade-up 0.55s ease backwards;
+}
+.hero__title {
+  animation-delay: 0.08s;
+}
+.hero__desc {
+  animation-delay: 0.16s;
+}
+.hero__actions {
+  animation-delay: 0.24s;
+}
+.hero__meta {
+  animation-delay: 0.32s;
+}
+
+.profile-card__avatar,
+.profile-card__sign {
+  animation: fade-up 0.5s ease backwards;
+}
+.profile-card__avatar {
+  animation-delay: 0.12s;
+}
+.profile-card__socials .social {
+  animation: fade-up 0.45s ease backwards;
+}
+.profile-card__socials .social:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.profile-card__socials .social:nth-child(2) {
+  animation-delay: 0.28s;
+}
+.profile-card__socials .social:nth-child(3) {
+  animation-delay: 0.36s;
+}
+.profile-card__sign {
+  animation-delay: 0.44s;
+}
+
 /* ============ 动画 ============ */
 .reveal {
   opacity: 0;
