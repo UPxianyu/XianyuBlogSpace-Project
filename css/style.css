@@ -977,6 +977,15 @@ html[data-theme="light"] .social {
   }
 }
 
+@keyframes avatar-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .hero__kicker,
 .hero__title,
 .hero__desc,
@@ -997,12 +1006,8 @@ html[data-theme="light"] .social {
   animation-delay: 0.32s;
 }
 
-.profile-card__avatar,
-.profile-card__sign {
-  animation: fade-up 0.5s ease backwards;
-}
 .profile-card__avatar {
-  animation-delay: 0.12s;
+  animation: avatar-fade 0.6s ease 0.15s backwards;
 }
 .profile-card__socials .social {
   animation: fade-up 0.45s ease backwards;
@@ -1017,7 +1022,7 @@ html[data-theme="light"] .social {
   animation-delay: 0.36s;
 }
 .profile-card__sign {
-  animation-delay: 0.44s;
+  animation: fade-up 0.5s ease 0.44s backwards;
 }
 
 /* ============ 动画 ============ */

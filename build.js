@@ -265,9 +265,9 @@ function profileSideHtml(aboutHref) {
     .join("");
   const avatarHtml = aboutHref
     ? `<a class="profile-card__avatar-link" href="${aboutHref}" aria-label="自我介绍">
-        <img class="profile-card__avatar" src="${url("assets/avatar.webp")}" alt="${R.escapeHtml(site.heroName || "avatar")}">
+        <img class="profile-card__avatar" src="${url("assets/avatar.webp")}" alt="${R.escapeHtml(site.heroName || "avatar")}" fetchpriority="high">
       </a>`
-    : `<img class="profile-card__avatar" src="${url("assets/avatar.webp")}" alt="${R.escapeHtml(site.heroName || "avatar")}">`;
+    : `<img class="profile-card__avatar" src="${url("assets/avatar.webp")}" alt="${R.escapeHtml(site.heroName || "avatar")}" fetchpriority="high">`;
   return `
     <aside class="home-side">
       <div class="profile-card">
@@ -308,6 +308,7 @@ function renderIndex(posts) {
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="${url("assets/favicon.png")}">
   <link rel="apple-touch-icon" href="${url("assets/apple-touch-icon.png")}">
+  <link rel="preload" as="image" href="${url("assets/avatar.webp")}">
   <link rel="canonical" href="${absoluteUrl("")}">
   <link rel="alternate" type="application/rss+xml" title="RSS" href="${absoluteUrl("feed.xml")}">
   <link rel="stylesheet" href="${url("css/style.css")}">
