@@ -212,6 +212,9 @@ function navHtml(s) {
         <a href="${url("#about")}">关于</a>
         <a href="${url("#links")}">友链</a>
       </nav>
+      <button class="nav__toggle" id="navToggle" type="button" aria-label="展开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <circle cx="12" cy="12" r="4.5"></circle>
@@ -230,10 +233,13 @@ function footerHtml(s) {
   <footer class="footer">
     <p class="footer__line">
       <span class="footer__status"><i></i> ALL SYSTEMS NOMINAL</span>
+      <a class="footer__rss" href="${url("feed.xml")}" target="_blank" rel="noopener">RSS</a>
     </p>
     <p class="footer__copy">${R.escapeHtml(s.footerText || "")}</p>
   </footer>`;
 }
+
+const BACK_TOP_HTML = `<button class="back-top" id="backTop" type="button" aria-label="返回顶部">↑</button>`;
 
 /* ---------------- 首页右侧个人卡片 ---------------- */
 
@@ -285,6 +291,17 @@ function renderIndex(posts) {
   const cards = posts.map(cardHtml).join("");
   const archive = posts.map(archiveItemHtml).join("");
   const aboutHref = url("#about");
+  const aboutHtml = Array.isArray(site.about)
+    ? `<div class="about-card">${site.about
+        .map(
+          (it) => `
+      <div class="about-card__item">
+        <span class="about-card__label">${R.escapeHtml(it.label || "")}</span>
+        <span class="about-card__value">${R.escapeHtml(it.value || "")}</span>
+      </div>`
+        )
+        .join("")}</div>`
+    : `<div class="about-card">${R.escapeHtml(site.about || "")}</div>`;
   const linkCards = (site.links || [])
     .map(
       (l) => `
@@ -373,7 +390,7 @@ function renderIndex(posts) {
       <div class="section__head">
         <h2><span class="section__tag">04</span> 关于本鱼🐟</h2>
       </div>
-      <div class="about-card">${R.escapeHtml(site.about || "")}</div>
+      ${aboutHtml}
     </section>
 
     <section class="section" id="links">
@@ -387,6 +404,7 @@ function renderIndex(posts) {
   </div>
   </main>
   ${footerHtml(site)}
+  ${BACK_TOP_HTML}
   <script>window.BLOG_SITE = ${clean(site)}; window.BLOG_POSTS = ${clean(posts)};</script>
   <script src="${url("js/main.js")}"></script>
 </body>
@@ -452,6 +470,7 @@ function renderPostPage(p) {
     </section>
   </main>
   ${footerHtml(site)}
+  ${BACK_TOP_HTML}
   <script>window.BLOG_SITE = ${clean(site)}; window.BLOG_POST = ${clean(p.data)};</script>
   <script src="${url("js/post.js")}"></script>
 </body>

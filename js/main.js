@@ -152,6 +152,38 @@ function initTheme() {
   });
 }
 
+/* ============ 移动端菜单 ============ */
+function initNav() {
+  const nav = $("#nav");
+  const toggle = $("#navToggle");
+  if (!nav || !toggle) return;
+  const close = () => {
+    nav.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+  };
+  toggle.addEventListener("click", () => {
+    const open = nav.classList.toggle("is-open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  document.addEventListener("click", (e) => {
+    if (nav.classList.contains("is-open") && !nav.contains(e.target)) close();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
+  nav.querySelectorAll(".nav__links a").forEach((a) => a.addEventListener("click", close));
+}
+
+/* ============ 返回顶部 ============ */
+function initBackTop() {
+  const btn = $("#backTop");
+  if (!btn) return;
+  const onScroll = () => btn.classList.toggle("is-visible", window.scrollY > 600);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+}
+
 /* ============ 顶部时钟 ============ */
 function initClock() {
   const el = $("#clock");
@@ -237,6 +269,8 @@ function observeReveals() {
 /* ============ 初始化 ============ */
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
+  initNav();
+  initBackTop();
   initClock();
   initTypewriter();
   initScrollEffects();
