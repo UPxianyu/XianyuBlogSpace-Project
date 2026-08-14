@@ -493,9 +493,11 @@ async function main() {
   for (const f of ["main.js", "post.js"]) {
     fs.copyFileSync(path.join(ROOT, "js", f), path.join(DIST, "js", f));
   }
-  // 自定义域名（GitHub Pages 部署必需）
-  if (fs.existsSync(path.join(ROOT, "CNAME"))) {
-    fs.copyFileSync(path.join(ROOT, "CNAME"), path.join(DIST, "CNAME"));
+  // 需要原样部署到站点根目录的文件（自定义域名、搜索引擎验证文件等）
+  for (const f of ["CNAME", "BingSiteAuth.xml"]) {
+    if (fs.existsSync(path.join(ROOT, f))) {
+      fs.copyFileSync(path.join(ROOT, f), path.join(DIST, f));
+    }
   }
 
   // 帖子图片：优先处理帖子专属 images/ 目录，再补齐公共 content/posts/images/ 里被引用的文件。
