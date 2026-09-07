@@ -116,9 +116,9 @@ git push             # 推送后自动重新构建并上线
 
 ## 功能
 
-- 首页：ID 咸鱼、"这是咸鱼的小站" Hero + 主题打字机、三大主题卡（随笔含 1 个子类）、标题搜索、分类筛选、封面卡片、归档、关于（占位）、友链（GitHub / DeepSeek）
+- 首页：ID 咸鱼、"这是咸鱼的小站" Hero + 主题打字机、三大主题卡、标题搜索、分类筛选、封面卡片、归档、关于（占位）、友链（GitHub / DeepSeek）
 - 文章页：头图、正文（中英/emoji/小标题/表格/代码块/文间图）、阅读量、Waline 评论
-- 随机背景：6 款（grid / aurora / dots / circuit / nebula / diagonal），`?bg=名字` 固定预览
+- 随机背景：8 款（grid / aurora / dots / circuit / nebula / blueprint / radar / mesh），`?bg=名字` 固定预览
 - 阅读量：Waline 浏览量统计（pageview），与评论共用后端，加载失败自动降级
 - 图片：构建时自动压缩为 WebP，单张相机原图（数 MB）可降到几百 KB
 - 代码块：highlight.js 高亮（跟随明暗主题），评论组件滚动到附近才加载

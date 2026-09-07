@@ -76,7 +76,7 @@ const HEAD_INLINE_SCRIPT = `<script>
     var t = localStorage.getItem("theme");
     if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
   } catch (e) {}
-  var bgs = ["grid", "aurora", "dots", "circuit", "nebula", "diagonal"];
+  var bgs = ["grid", "aurora", "dots", "circuit", "nebula", "blueprint", "radar", "mesh"];
   var bg = new URLSearchParams(location.search).get("bg");
   if (bgs.indexOf(bg) === -1) bg = bgs[Math.floor(Math.random() * bgs.length)];
   document.documentElement.setAttribute("data-bg", bg);
