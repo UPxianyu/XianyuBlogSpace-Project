@@ -3,3 +3,5 @@ data/
 dist/
 _legacy/
 .DS_Store
+# 本地写作模板：仅用于写文，不提交
+content/posts/模板.md
