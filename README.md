@@ -1,6 +1,6 @@
 # P1-Blog · 咸鱼的博客
 
-静态个人博客：兴趣与学习随笔（计算机学习 / 日常分享 / 游戏）。
+静态个人博客：兴趣与学习随笔（计算机学习 / 日常分享 / 游戏 / 随笔）。
 只需要 Node.js（≥18.17），依赖仅用于构建时图片压缩（sharp）。
 
 ## 快速开始
@@ -30,7 +30,7 @@ node server.js
 ---
 title: 文章标题
 date: 2026-08-01
-category: 游戏              # 计算机学习 / 日常分享 / 游戏
+category: 游戏              # 计算机学习 / 日常分享 / 游戏 / 随笔
 subcategory: GTNH           # 可选：MC原版、GTNH、FPS、GALGAME、二游
 tags: Minecraft, GTNH
 excerpt: 一句话摘要（留空自动截取）
@@ -116,7 +116,7 @@ git push             # 推送后自动重新构建并上线
 
 ## 功能
 
-- 首页：ID 咸鱼、"这是咸鱼的小站" Hero + 主题打字机、三大主题卡（游戏含 5 个子类）、标题搜索、分类筛选、封面卡片、归档、关于（占位）、友链（GitHub / DeepSeek）
+- 首页：ID 咸鱼、"这是咸鱼的小站" Hero + 主题打字机、四大主题卡（游戏含 5 个子类，日常分享含 1 个子类）、标题搜索、分类筛选、封面卡片、归档、关于（占位）、友链（GitHub / DeepSeek）
 - 文章页：头图、正文（中英/emoji/小标题/表格/代码块/文间图）、阅读量、Waline 评论
 - 随机背景：6 款（grid / aurora / dots / circuit / nebula / diagonal），`?bg=名字` 固定预览
 - 阅读量：Waline 浏览量统计（pageview），与评论共用后端，加载失败自动降级
